@@ -10,3 +10,8 @@ export const game = new Application({
 });
 
 document.body.append(game.view);
+
+
+export function getRootContainer () {
+    return game.stage
+}

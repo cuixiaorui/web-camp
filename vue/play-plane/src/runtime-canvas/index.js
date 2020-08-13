@@ -1,35 +1,30 @@
-import { Graphics, Text } from "pixi.js";
+import { Texture, Sprite, Text, Container } from "pixi.js";
 import { createRenderer } from "@vue/runtime-core";
 const renderer = createRenderer({
   createElement(type) {
-    console.log(type);
-
-    // 基于type 创建 基于 canvas 的元素
     let element;
-
-    if (type === "rect") {
-      // 创建矩形
-      element = new Graphics();
-      element.beginFill(0xff0000);
-      element.drawRect(0, 0, 500, 500);
-      element.endFill();
-    } else if (type === "circle") {
-      // 创建矩形
-      element = new Graphics();
-      element.beginFill(0xffff00);
-      element.drawCircle(0, 0, 50);
-      element.endFill();
+    switch (type) {
+      case "Container":
+        element = new Container();
+        break;
+      case "Sprite":
+        element = new Sprite();
+        break;
     }
-
     return element;
   },
   patchProp(el, key, prevValue, nextValue) {
     // pixi
-    if (key === "x") {
-      el.x = nextValue;
-    }
-    if (key === "y") {
-      el.y = nextValue;
+    switch (key) {
+      case "texture":
+        el.texture = Texture.from(nextValue);
+        break;
+      case "onClick":
+        el.on("pointertap",nextValue)
+        break;
+      default:
+        el[key] = nextValue;
+        break;
     }
   },
   createText(text) {
@@ -44,7 +39,6 @@ const renderer = createRenderer({
   insert(el, parent) {
     // append
     parent.addChild(el);
-    console.log(el, parent);
   },
   // 新加接口实现
   // 处理注释

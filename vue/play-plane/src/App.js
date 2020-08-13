@@ -1,19 +1,41 @@
 // vue3
-import { defineComponent, h } from "@vue/runtime-core";
-import Circle from "./components/Circle";
+import { ref,computed, defineComponent, h } from "@vue/runtime-core";
+import StartPage from "./page/StartPage";
+import GamePage from "./page/GamePage";
+import EndPage from "./page/EndPage";
 
 // template -> render
 export default defineComponent({
-  render() {
-    // <div></div>
-    // <div x="100" y="100">开课吧nb<circle></circle></div>
-    // <circle>
-    const vnode = h("rect", { x: 100, y: 100 }, [
-      "开课吧nb",
-      // h("circle", { x: 200, y: 200 }),
-      h(Circle),
+  setup() {
+    // vue2 data
+    // 创建响应式对象 ref
+    // const currentPageName = ref("StartPage");
+    const currentPageName = ref("GamePage");
+    // 计算属性
+    // 依赖别的属性的属性
+    const currentPage = computed(() => {
+      if (currentPageName.value === "StartPage") {
+        return StartPage;
+      } else if (currentPageName.value === "GamePage") {
+        return GamePage;
+      } else if (currentPageName.value === "EndPage") {
+        return EndPage;
+      }
+    });
+
+    return {
+      currentPage,
+      currentPageName
+    }
+  },
+  render(ctx) {
+    return h("Container", [
+      h(ctx.currentPage, {
+        onChangePage(page) {
+          ctx.currentPageName = page;
+        },
+      }),
     ]);
-    console.log(vnode);
-    return vnode;
+    // return h("Container", [h(GamePage)]);
   },
 });
